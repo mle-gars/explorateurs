@@ -2,9 +2,9 @@ import pandas
 
 def prepare_data(edges_df):
 
-	starting_nodes = edges_df[edges_df["type_aretes"] == "depart"]["noeud_amont"].values
+	seq_starting_nodes = edges_df[edges_df["type_aretes"] == "depart"]["noeud_amont"].values
 
-	ending_nodes = edges_df[edges_df["type_aretes"] == "arrivee"]["noeud_aval"].values
+	seq_ending_nodes = edges_df[edges_df["type_aretes"] == "arrivee"]["noeud_aval"].values
 
 	dict_upstream_downstream = {} # key : noeud_amont => value : noeud_aval
 	for _, row in edges_df.iterrows():
@@ -18,10 +18,10 @@ def prepare_data(edges_df):
 	# for upstream_node, downstream_node in zip(edges_df["noeud_amont"].values, edges_df["noeud_aval"].values):
 	# 	dict_upstream_downstream[upstream_node] = downstream_node
 
-	return starting_nodes, ending_nodes, dict_upstream_downstream
+	return seq_starting_nodes, seq_ending_nodes, dict_upstream_downstream
 
 
-def get_explorators_paths(starting_nodes, ending_nodes, dict_upstream_downstream):
+def get_explorators_paths(seq_starting_nodes, seq_ending_nodes, dict_upstream_downstream):
 
 
 	"""
@@ -33,11 +33,11 @@ def get_explorators_paths(starting_nodes, ending_nodes, dict_upstream_downstream
 	"""
 
 
-	for starting_node in starting_nodes:
+	for starting_node in seq_starting_nodes:
 		# une itération consiste à reconstruire le chemain pris par 1 explorateur	
 		explorator_path = [starting_node]
 		
-		while explorator_path[-1] not in ending_nodes:
+		while explorator_path[-1] not in seq_ending_nodes:
 			downstream_node = dict_upstream_downstream[explorator_path[-1]]
 			
 			explorator_path.append(downstream_node)
