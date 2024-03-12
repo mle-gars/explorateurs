@@ -45,7 +45,7 @@ def get_explorators_paths(seq_starting_nodes, seq_ending_nodes, dict_upstream_do
                 break
         
         print("Explorator Path:", explorator_path)
-        print("Total Distance:", total_distance)
+        print(f"Total Distance: {total_distance:.2f} km")
 
 if __name__ == "__main__":
     edges_df = pandas.read_csv("./parcours_explorateurs.csv")
