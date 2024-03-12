@@ -21,34 +21,34 @@ def prepare_data(edges_df):
 	return seq_starting_nodes, seq_ending_nodes, dict_upstream_downstream
 
 
-def get_explorators_paths(seq_starting_nodes, seq_ending_nodes, dict_upstream_downstream):
-
-
-	"""
-	on loop sur starting node :
-		# une itération consiste à reconstruire le chemain pris par 1 explorateur
-		explorator_path = []
-		Tant que le noeud en cours n'appartient pas à ending_nodes:
-			je reccupère à l'aide dictionnaire le noeud aval du noeud en cours et je la rajoute à explorator_path
-	"""
-
-
-	for starting_node in seq_starting_nodes:
-		# une itération consiste à reconstruire le chemain pris par 1 explorateur	
-		explorator_path = [starting_node]
-		
-		while explorator_path[-1] not in seq_ending_nodes:
-			downstream_node = dict_upstream_downstream[explorator_path[-1]]
-			
-			explorator_path.append(downstream_node)
-
-		print(explorator_path)
-
-
+def get_explorators_paths(seq_starting_nodes, seq_ending_nodes, dict_upstream_downstream, edges_df):
+    for starting_node in seq_starting_nodes:
+        explorator_path = [starting_node]
+        
+        total_distance = 0
+        while explorator_path[-1] not in seq_ending_nodes:
+            
+            current_node = explorator_path[-1]
+            next_node = dict_upstream_downstream[current_node]
+            
+            edge = edges_df[(edges_df["noeud_amont"] == current_node) & (edges_df["noeud_aval"] == next_node)]
+            
+            if not edge.empty:
+               
+                total_distance += edge["distance"].values[0]
+                
+                explorator_path.append(next_node)
+                
+            else:
+                
+                print(f"No edge found between {current_node} and {next_node}")
+                break
+        
+        print("Explorator Path:", explorator_path)
+        print("Total Distance:", total_distance)
 
 if __name__ == "__main__":
-	
-	edges_df = pandas.read_csv("./parcours_explorateurs.csv")
-	starting_nodes, ending_nodes, dict_upstream_downstream = prepare_data(edges_df)
-	get_explorators_paths(starting_nodes, ending_nodes, dict_upstream_downstream)
+    edges_df = pandas.read_csv("./parcours_explorateurs.csv")
+    starting_nodes, ending_nodes, dict_upstream_downstream = prepare_data(edges_df)
+    get_explorators_paths(starting_nodes, ending_nodes, dict_upstream_downstream, edges_df)
 
